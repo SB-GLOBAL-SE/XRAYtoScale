@@ -154,7 +154,7 @@ for item in XRAYtransformed_data:
         new_item = item.copy()
         new_item["key"] = key
         updated_XRAYtransformed_data.append(new_item)
-        print({"Key": key})
+        #print({"Key": key})
         # Add the test case ID to the set of processed test cases
         processed_test_case_ids.add(issue_id)
     else:
@@ -162,30 +162,46 @@ for item in XRAYtransformed_data:
         print(response.content)
 
 # Print updated XRAYtransformed_data with keys
-print(updated_XRAYtransformed_data)
+#print(updated_XRAYtransformed_data)
         
     
 #Send Request to POST test Steps:
+ScaleSteps = {}
 
 for item in updated_XRAYtransformed_data:
     default_headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL21hdHRiNDcwMC5hdGxhc3NpYW4ubmV0IiwidXNlciI6eyJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMGVjNDI4YTEtMjQ3MS0zZWVjLTg4YzktZjQzMDA0Mjg4ODI4IiwiZXhwIjoxNzQ3NzUzMjkwLCJpYXQiOjE3MTYyMTcyOTB9.ohRcxiCS0lxVgIznaifxb9U8qIOBInzfwTd6TVcI9UU'}
     key = item.get('key')
-    steps = item.get('steps')
     testCaseKey=key
+    steps = item.get('steps')
+    formatted_steps = [
+        {
+            'inline': {
+                'testData': step.get('data') or '',
+                'description': step.get('action') or '',
+                'expectedResult': step.get('result') or ''
+            }
+        }
+        for step in steps
+    ]
+    ScaleSteps[key] = formatted_steps
+    
     stepsPayload = {
         "mode": "APPEND",
-        "items": steps
+        "items": ScaleSteps[testCaseKey]
 
     }
-    print(stepsPayload)
+    
     testcase_url = f"https://api.zephyrscale.smartbear.com/v2/testcases/{testCaseKey}/teststeps"
-    #print(testcase_url)
-    #print(stepsPayload)
+ 
     response = requests.post(testcase_url, json=stepsPayload, headers=default_headers)
     if response.status_code == 201:
-        print("steps posted succfessful")
-
+        print(f"Steps posted successfully for {key}")
     else:
-        print(response.content)
+        error_data = response.json()
+        if "Test Data, Description and Expected Result are empty" in error_data.get("message", ""):
+            print(f"No data in test steps, but successfyl")
+        else:
+            print(f"Unexpected error for {key}: {response.status_code}")
+            print(response.content)
