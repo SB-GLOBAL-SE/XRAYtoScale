@@ -347,14 +347,57 @@ for item in formatted_response:
         cycleKey = response_data.get("key")
         print({"Key": cycleKey})
         #####POST executions for that cycle (iterate down formatted_response)
-        print(formatted_response)
+        #print(formatted_response)
+        def store_executions_for_summary(formatted_response, target_summary):
+            executions_for_summary = []
+            for entry in formatted_response:
+                if entry['summary'] == target_summary:
+                    test_executions = entry['testExecutions']['testRuns']['status']
+                    if isinstance(test_executions, list):
+                        executions_for_summary.extend(test_executions)
+                    else:
+                        executions_for_summary.append(test_executions)
+            return executions_for_summary
 
+        # Function to create payloads from summary executions
+        def create_payloads(summary_executions, project_key, cycle_key):
+            payloads = []
+            for execution in summary_executions:
+                if 'key' in execution:  # Ensure 'key' exists to avoid KeyError
+                    payload = {
+                        "projectKey": project_key,
+                        "testCaseKey": execution['key'],
+                        "testCycleKey": cycle_key,
+                        "statusName": execution['name'],
+                        "comment" : execution['description'],
+                    }
+                    payloads.append(payload)
 
+                    
+            return payloads
 
+        # Example usage
+        target_summary = summary  
+        project_key = project
+        cycle_key = cycleKey  # Replace with actual cycle key
+
+        summary_executions = store_executions_for_summary(formatted_response, target_summary)
+        payloads = create_payloads(summary_executions, project_key, cycle_key)
+
+        # API URL and headers
+        executions_url = "https://api.zephyrscale.smartbear.com/v2/testexecutions"
+        default_headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL21hdHRiNDcwMC5hdGxhc3NpYW4ubmV0IiwidXNlciI6eyJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMGVjNDI4YTEtMjQ3MS0zZWVjLTg4YzktZjQzMDA0Mjg4ODI4IiwiZXhwIjoxNzQ3NzUzMjkwLCJpYXQiOjE3MTYyMTcyOTB9.ohRcxiCS0lxVgIznaifxb9U8qIOBInzfwTd6TVcI9UU'
+        }
+
+        # Sending the payloads to the API
+        for cycle_payload in payloads:
+            response = requests.post(executions_url, json=cycle_payload, headers=default_headers)
+            if response.status_code == 201:
+                print("Executions were successful")
+            else:
+                print(response.content)
     else:
         print("Error")
         print(response.text)
-
-   
-
-#####POST executions for that cycle (iterate down formatted_response)
