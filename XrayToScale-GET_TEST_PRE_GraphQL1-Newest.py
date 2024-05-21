@@ -188,7 +188,7 @@ for item in updated_XRAYtransformed_data:
     ScaleSteps[key] = formatted_steps
     
     stepsPayload = {
-        "mode": "APPEND",
+        "mode": "OVERWRITE",
         "items": ScaleSteps[testCaseKey]
 
     }
