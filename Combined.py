@@ -329,7 +329,32 @@ for plan in formatted_response:
                 status['key'] = key_lookup[issue_id]
 
 
-print(formatted_response)
+for item in formatted_response:
+    summary = item['summary']
+    
+    cyclePayload = {
+        "projectKey" : project,
+        "name" : summary,
+    }
+
+    cycleUrl = "https://api.zephyrscale.smartbear.com/v2/testcycles"
+    default_headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL21hdHRiNDcwMC5hdGxhc3NpYW4ubmV0IiwidXNlciI6eyJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMGVjNDI4YTEtMjQ3MS0zZWVjLTg4YzktZjQzMDA0Mjg4ODI4IiwiZXhwIjoxNzQ3NzUzMjkwLCJpYXQiOjE3MTYyMTcyOTB9.ohRcxiCS0lxVgIznaifxb9U8qIOBInzfwTd6TVcI9UU'}
+    response = requests.post(cycleUrl, json=cyclePayload, headers=default_headers)
+    if response.status_code == 201:
+        response_data = response.json()  # Parse JSON response
+        cycleKey = response_data.get("key")
+        print({"Key": cycleKey})
+        #####POST executions for that cycle (iterate down formatted_response)
+        print(formatted_response)
 
 
-##### POST test cycle > POST executions for that cycle (iterate down)
+
+    else:
+        print("Error")
+        print(response.text)
+
+   
+
+#####POST executions for that cycle (iterate down formatted_response)
