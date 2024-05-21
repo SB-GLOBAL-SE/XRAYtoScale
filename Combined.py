@@ -99,7 +99,7 @@ for item in TestCaseData:
     transformed_item = {
         'Name': item['jira_summary'].replace('(', '').replace(')', '').strip(),
         'projectKey': 'XRAY',  # Replace with your actual project key if different
-        'objective': item['jira_description'].replace('(', '').replace(')', '').strip(),
+        'objective' : item['jira_description'].replace('(', '').replace(')', '').strip() if item['jira_description'] else '',
         'XrayTestID': item['issue_id'],
         'steps': item['steps'],
         'preconditions': item['preconditions']
@@ -200,8 +200,14 @@ for item in updated_XRAYtransformed_data:
         print(f"Steps posted successfully for {key}")
     else:
         error_data = response.json()
-        if "Test Data, Description and Expected Result are empty" in error_data.get("message", ""):
-            print(f"No data in test steps, but successfyl")
+        error_message = error_data.get("message", "").strip()
+        
+        # Debug statements to understand the content of error_message
+        #print(f"Error message received: '{error_message}'")
+        
+        if ("Test Data, Description and Expected Result are empty" in error_message or 
+            "Should contain at least 1 step and no more than 100" in error_message):
+            print("No data in test steps, but successful")
         else:
             print(f"Unexpected error for {key}: {response.status_code}")
             print(response.content)
