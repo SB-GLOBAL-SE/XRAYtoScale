@@ -1,5 +1,6 @@
 import requests
 from requests.auth import HTTPBasicAuth
+import configparser
 import sys
 
 ####################################
@@ -17,15 +18,19 @@ if len(sys.argv) != 6:
     print("Usage: python3 combined.py <project> <project_key> <projectID> <jira_base_url> <email>")
     sys.exit(1)
 
-
-Jira_api_token = ""
-XRAY_Bearer_Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5hbnQiOiIwZWM0MjhhMS0yNDcxLTNlZWMtODhjOS1mNDMwMDQyODg4MjgiLCJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUiLCJpc1hlYSI6ZmFsc2UsImlhdCI6MTcxNjQ4NjY5MSwiZXhwIjoxNzE2NTczMDkxLCJhdWQiOiIwODA1QUNBQzJDNzg0NTYxQjg5RTFDQzFCN0Y3NUUwNSIsImlzcyI6ImNvbS54cGFuZGl0LnBsdWdpbnMueHJheSIsInN1YiI6IjA4MDVBQ0FDMkM3ODQ1NjFCODlFMUNDMUI3Rjc1RTA1In0.jnliepxnHAZiowUsL9HZwWc8kbQcGHfnGmm-mpW8iLA"
-Scale_Bearer_Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL21hdHRiNDcwMC5hdGxhc3NpYW4ubmV0IiwidXNlciI6eyJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMGVjNDI4YTEtMjQ3MS0zZWVjLTg4YzktZjQzMDA0Mjg4ODI4IiwiZXhwIjoxNzQ4MDIyMzQ2LCJpYXQiOjE3MTY0ODYzNDZ9.o_2-Q-1y_iVHmTBe61Uc8o125Z9XkAJ_pyBzXhVVu3U"
+#########
+##Read tokens from app.prop file.
+config = configparser.ConfigParser()
+config.read('app.prop')
+jira_api_token = config.get('DEFAULT', 'Jira_api_token', fallback=None)
+xray_bearer_token = config.get('DEFAULT', 'XRAY_Bearer_Token', fallback=None)
+scale_bearer_token = config.get('DEFAULT', 'Scale_Bearer_Token', fallback=None)
 project = sys.argv[1]
 projectKey = sys.argv[2]
 projectID = sys.argv[3]
 Jira_base_url = sys.argv[4]
 email = sys.argv[5]
+
 
 
 
@@ -38,7 +43,7 @@ totalUrl = f'{Jira_base_url}/rest/api/3/search'
 headers = {
     'Content-Type': 'application/json',
 }
-auth = HTTPBasicAuth(email, Jira_api_token)
+auth = HTTPBasicAuth(email, jira_api_token)
 
 # Parameters
 params = {
@@ -113,7 +118,7 @@ all_results = []
 while start_index < total:
     variables['start'] = start_index
     response = requests.post(url, json={'query': query, 'variables': variables}, headers={
-        "Authorization": f"Bearer {XRAY_Bearer_Token}",  # Replace with your actual token if needed
+        "Authorization": f"Bearer {xray_bearer_token}",  # Replace with your actual token if needed
         "Content-Type": "application/json"
     })
     if response.status_code == 200:
@@ -235,7 +240,7 @@ while start_index < total:
 ##### Create Test Cases in Zephyr Scale         
         default_headers = {
         'Content-Type': 'application/json',
-        'Authorization': f'Bearer {Scale_Bearer_Token}'
+        'Authorization': f'Bearer {scale_bearer_token}'
         }
         testcase_url = "https://api.zephyrscale.smartbear.com/v2/testcases"
         # Send POST request
@@ -262,7 +267,7 @@ while start_index < total:
     for item in updated_XRAYtransformed_data:
         default_headers = {
         'Content-Type': 'application/json',
-        'Authorization': f'Bearer {Scale_Bearer_Token}'
+        'Authorization': f'Bearer {scale_bearer_token}'
         }
         
         key = item.get('key')
@@ -370,7 +375,7 @@ while start_index < total:
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {XRAY_Bearer_Token}"
+        "Authorization": f"Bearer {xray_bearer_token}"
     }
 
 #####################################
@@ -445,7 +450,7 @@ while start_index < total:
         cycleUrl = "https://api.zephyrscale.smartbear.com/v2/testcycles"
         default_headers = {
         'Content-Type': 'application/json',
-        'Authorization': f'Bearer {Scale_Bearer_Token}'
+        'Authorization': f'Bearer {scale_bearer_token}'
         }
         
         
@@ -499,7 +504,7 @@ while start_index < total:
             executions_url = "https://api.zephyrscale.smartbear.com/v2/testexecutions"
             default_headers = {
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {Scale_Bearer_Token}'
+                'Authorization': f'Bearer {scale_bearer_token}'
                 }
 
             # Sending the payloads to the API
