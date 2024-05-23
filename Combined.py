@@ -6,9 +6,12 @@ import requests
 #"client_id": "0805ACAC2C784561B89E1CC1B7F75E05","client_secret": "9565261606185b66b6e2bb76be6698101d1c9bff041c9bba7bf92a7b7a37328f" }'
 # https://xray.cloud.getxray.app/api/v1/authenticate
 
-XRAY_Bearer_Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5hbnQiOiIwZWM0MjhhMS0yNDcxLTNlZWMtODhjOS1mNDMwMDQyODg4MjgiLCJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUiLCJpc1hlYSI6ZmFsc2UsImlhdCI6MTcxNjMwNTAwMCwiZXhwIjoxNzE2MzkxNDAwLCJhdWQiOiIwODA1QUNBQzJDNzg0NTYxQjg5RTFDQzFCN0Y3NUUwNSIsImlzcyI6ImNvbS54cGFuZGl0LnBsdWdpbnMueHJheSIsInN1YiI6IjA4MDVBQ0FDMkM3ODQ1NjFCODlFMUNDMUI3Rjc1RTA1In0.ZHf5zNWz9BfHhYGbTboEIH4GmftQddLWR7oSx_KmUDk"
+XRAY_Bearer_Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5hbnQiOiIwZWM0MjhhMS0yNDcxLTNlZWMtODhjOS1mNDMwMDQyODg4MjgiLCJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUiLCJpc1hlYSI6ZmFsc2UsImlhdCI6MTcxNjM5OTMzMSwiZXhwIjoxNzE2NDg1NzMxLCJhdWQiOiIwODA1QUNBQzJDNzg0NTYxQjg5RTFDQzFCN0Y3NUUwNSIsImlzcyI6ImNvbS54cGFuZGl0LnBsdWdpbnMueHJheSIsInN1YiI6IjA4MDVBQ0FDMkM3ODQ1NjFCODlFMUNDMUI3Rjc1RTA1In0.5qx0sFGCnWanOo7O6eMmFjCk9y9hW6aDfJv20OzlWHw"
+
 Scale_Bearer_Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL21hdHRiNDcwMC5hdGxhc3NpYW4ubmV0IiwidXNlciI6eyJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMGVjNDI4YTEtMjQ3MS0zZWVjLTg4YzktZjQzMDA0Mjg4ODI4IiwiZXhwIjoxNzQ3NzUzMjkwLCJpYXQiOjE3MTYyMTcyOTB9.ohRcxiCS0lxVgIznaifxb9U8qIOBInzfwTd6TVcI9UU"
-project = "XRAY"
+project = "2Xray"
+projectKey = "XRRR"
+projectID = "10003"
 
 # Define the GraphQL endpoint
 url = "https://xray.cloud.getxray.app/api/v2/graphql"  # Replace with your actual endpoint
@@ -16,7 +19,7 @@ url = "https://xray.cloud.getxray.app/api/v2/graphql"  # Replace with your actua
 # Define the variables for the querys
 variables = {
     "jql": f"project = {project}",  # Replace with your JQL
-    "projectId": "10002",  # Replace with your project ID
+    "projectId": f"{projectID}",  # Replace with your project ID
     "testType": None,  # Replace with test type if needed
     "limit": 10,  # Replace with desired limit (max 100)
     "start": 0,  # Replace with desired start index
@@ -98,16 +101,16 @@ for test in data['data']['getTests']['results']:
         test_data['preconditions'].append(precondition_data)
     
     TestCaseData.append(test_data)
-    #print(TestCaseData)
+    
 
    
     XRAYtransformed_data = []
-
+print(TestCaseData)
 for item in TestCaseData:
     
     transformed_item = {
         'Name': item['jira_summary'].replace('(', '').replace(')', '').strip(),
-        'projectKey': 'XRAY',  # Replace with your actual project key if different
+        'projectKey': projectKey,  # Replace with your actual project key if different
         'objective' : item['jira_description'].replace('(', '').replace(')', '').strip() if item['jira_description'] else '',
         'XrayTestID': item['issue_id'],
         'steps': item['steps'],
@@ -115,7 +118,7 @@ for item in TestCaseData:
     }
     
     XRAYtransformed_data.append(transformed_item)
-
+    
 # New list to store updated data with keys
 updated_XRAYtransformed_data = []
 
@@ -147,6 +150,7 @@ for item in XRAYtransformed_data:
         "objective": objective,
         "precondition": precondition_text
     }
+    
     default_headers = {
     'Content-Type': 'application/json',
     'Authorization': f'Bearer {Scale_Bearer_Token}'
@@ -273,7 +277,7 @@ query = """
 variables = {
     "jql": f"project = {project}",  # Replace with your JQL
     #"issueIds": None,  # Replace with issue IDs if needed
-    "projectId": "10002",  # Replace with your project ID
+    "projectId": f"{projectID}",  # Replace with your project ID
     "testType": "Test",  # Replace with test type if needed
     #"modifiedSince": None,  # Replace with modified date if needed
     "limit": 10,  # Replace with desired limit (max 100)
@@ -350,7 +354,7 @@ for item in formatted_response:
     summary = item['summary']
     
     cyclePayload = {
-        "projectKey" : project,
+        "projectKey" : projectKey,
         "name" : summary,
     }
 
@@ -380,17 +384,18 @@ for item in formatted_response:
             return executions_for_summary
 
         # Function to create payloads from summary executions
-        def create_payloads(summary_executions, project_key, cycle_key):
+        def create_payloads(summary_executions, projectKey, cycle_key):
             payloads = []
             for execution in summary_executions:
                 if 'key' in execution:  # Ensure 'key' exists to avoid KeyError
                     payload = {
-                        "projectKey": project_key,
+                        "projectKey": projectKey,
                         "testCaseKey": execution['key'],
                         "testCycleKey": cycle_key,
                         "statusName": execution['name'],
                         "comment" : execution['description'],
                     }
+
                     payloads.append(payload)
 
                     
@@ -398,11 +403,11 @@ for item in formatted_response:
 
         # Example usage
         target_summary = summary  
-        project_key = project
+
         cycle_key = cycleKey  # Replace with actual cycle key
 
         summary_executions = store_executions_for_summary(formatted_response, target_summary)
-        payloads = create_payloads(summary_executions, project_key, cycle_key)
+        payloads = create_payloads(summary_executions, projectKey, cycle_key)
 
         # API URL and headers
         executions_url = "https://api.zephyrscale.smartbear.com/v2/testexecutions"
