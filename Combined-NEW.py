@@ -74,8 +74,24 @@ headers = {
 # Make the request
 response = requests.post(url, json={'query': query, 'variables': variables}, headers=headers)
 
+#Log error in textfile function
+def log_error_to_file(response, filename='error.txt'):
+        print('Errors during execution - review error.txt')
+        with open(filename, 'w') as file:
+            if key:
+                file.write("Test Case Key:")
+                file.write(str(key))
+                file.write("\n if Test Case Key does NOT exists, the Test Case was not published.\n")
+            if cycleKey:
+                file.write("\nTest Cycle Key:")
+                file.write(str(cycleKey))
+                file.write("\n if Test Cycle Key exists, the executions were NOT published for the associated Test Case and Cycle.\n")
+            file.write("\nResponse Content:\n")
+            file.write(response.content.decode('utf-8') + '\n')
 
-
+#Clear the error textfile at the beginning of the script run         
+with open('error.txt', 'w') as file:
+    file.write('')
 
 # Parse the response
 if response.status_code == 200:
@@ -83,6 +99,7 @@ if response.status_code == 200:
 
 else:
     print(f"Query failed to run by returning code of {response.status_code}. {response.text}")
+    log_error_to_file(response)
 
 TestCaseData = []
 
@@ -157,11 +174,9 @@ for item in XRAYtransformed_data:
         "objective": objective,
         "precondition": precondition_text
     }
-    print(payload)
     
     default_headers = {
     'Content-Type': 'application/json',
-   # 'jira-project-id' : f'{projectID}',
     'Authorization': f'Bearer {Scale_Bearer_Token}'
     }
     testcase_url = "https://api.zephyrscale.smartbear.com/v2/testcases"
@@ -175,19 +190,11 @@ for item in XRAYtransformed_data:
         new_item = item.copy()
         new_item["key"] = key
         updated_XRAYtransformed_data.append(new_item)
-        #print({"Key": key})
-        # Add the test case ID to the set of processed test cases
         processed_test_case_ids.add(issue_id)
-        print(payload)
-    else:
-        print("Error Here")
-        print(response.content)
-        
 
-# Print updated XRAYtransformed_data with keys
-#print(updated_XRAYtransformed_data)
+    else:
+        log_error_to_file(response)
         
-    
 #Send Request to POST test Steps:
 ScaleSteps = {}
 
@@ -222,7 +229,7 @@ for item in updated_XRAYtransformed_data:
  
     response = requests.post(testcase_url, json=stepsPayload, headers=default_headers)
     if response.status_code == 201:
-        print(f"Steps posted successfully for {key}")
+        pass
     else:
         error_data = response.json()
         error_message = error_data.get("message", "").strip()
@@ -232,10 +239,10 @@ for item in updated_XRAYtransformed_data:
         
         if ("Test Data, Description and Expected Result are empty" in error_message or 
             "Should contain at least 1 step and no more than 100" in error_message):
-            print("No data in test steps, but successful")
+            pass
         else:
             print(f"Unexpected error for {key}: {response.status_code}")
-            print(response.content)
+            log_error_to_file(response)
 
 url = "https://xray.cloud.getxray.app/api/v2/graphql"  # Replace with your actual endpoint
 
@@ -312,6 +319,7 @@ if response.status_code == 200:
     #print(response)
 else:
     print(f"Query failed to run by returning code of {response.status_code}. {response.text}")
+    log_error_to_file(response)
 
 formatted_response = []
 plan_executions = {}
@@ -380,7 +388,7 @@ for item in formatted_response:
     if response.status_code == 201:
         response_data = response.json()  # Parse JSON response
         cycleKey = response_data.get("key")
-        print({"Key": cycleKey})
+        
         #####POST executions for that cycle (iterate down formatted_response)
         #print(formatted_response)
         def store_executions_for_summary(formatted_response, target_summary):
@@ -433,7 +441,6 @@ for item in formatted_response:
             if response.status_code == 201:
                 print("Executions were successful")
             else:
-                print(response.content)
+                log_error_to_file(response)
     else:
-        print("Error")
-        print(response.text)
+        log_error_to_file(response)
