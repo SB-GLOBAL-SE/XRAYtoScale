@@ -1,16 +1,21 @@
 import requests
+import sys
 
 ####################################
 #Must Authenticate first with XRAY clientID and clientSecret to get Bearer Token
 # curl -H "Content-Type: application/json" -X POST --data '{
 #"client_id": "0805ACAC2C784561B89E1CC1B7F75E05","client_secret": "9565261606185b66b6e2bb76be6698101d1c9bff041c9bba7bf92a7b7a37328f" }'
 # https://xray.cloud.getxray.app/api/v1/authenticate
+if len(sys.argv) != 6:
+    print("Usage: python3 combined.py <XRAY_Bearer_Token> <Scale_Bearer_Token> <project> <project_key> <projectID>")
+    sys.exit(1)
 
-XRAY_Bearer_Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5hbnQiOiIwZWM0MjhhMS0yNDcxLTNlZWMtODhjOS1mNDMwMDQyODg4MjgiLCJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUiLCJpc1hlYSI6ZmFsc2UsImlhdCI6MTcxNjM5OTMzMSwiZXhwIjoxNzE2NDg1NzMxLCJhdWQiOiIwODA1QUNBQzJDNzg0NTYxQjg5RTFDQzFCN0Y3NUUwNSIsImlzcyI6ImNvbS54cGFuZGl0LnBsdWdpbnMueHJheSIsInN1YiI6IjA4MDVBQ0FDMkM3ODQ1NjFCODlFMUNDMUI3Rjc1RTA1In0.5qx0sFGCnWanOo7O6eMmFjCk9y9hW6aDfJv20OzlWHw"
-Scale_Bearer_Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL21hdHRiNDcwMC5hdGxhc3NpYW4ubmV0IiwidXNlciI6eyJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMGVjNDI4YTEtMjQ3MS0zZWVjLTg4YzktZjQzMDA0Mjg4ODI4IiwiZXhwIjoxNzQ3NzUzMjkwLCJpYXQiOjE3MTYyMTcyOTB9.ohRcxiCS0lxVgIznaifxb9U8qIOBInzfwTd6TVcI9UU"
-project = "XrayDuo"
-projectKey = "XRRR"
-projectID = "10003"
+XRAY_Bearer_Token = sys.argv[1]
+Scale_Bearer_Token = sys.argv[2]
+project = sys.argv[3]
+projectKey = sys.argv[4]
+projectID = sys.argv[5]
+
 
 # Define the GraphQL endpoint
 url = "https://xray.cloud.getxray.app/api/v2/graphql"  # Replace with your actual endpoint

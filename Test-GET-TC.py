@@ -28,35 +28,34 @@ variables = {
 
 # Define the query
 query = """
-query GetTests($limit: Int!, $start: Int, $jql: String, $projectId: String, $testType: TestTypeInput, $folder: FolderSearchInput) {
-    getTests(limit: $limit, start: $start, jql: $jql, projectId: $projectId, testType: $testType, folder: $folder) {
-        total
-        start
-        limit
-        results {
-            jira(fields: ["summary", "description"])
-            issueId
-            testType {
-                name
-                kind
-            }
-            steps {
-                data
-                action
-                result
-            }
-            preconditions(limit: 100) {
-                total
-                start
-                results {
-                    jira(fields: ["summary", "description"])
-                    issueId
-                    definition
-
-                }
-            }
+{
+  __schema {
+    types {
+      name
+      kind
+      description
+      fields {
+        name
+        description
+        args {
+          name
+          type {
+            name
+            kind
+          }
+          defaultValue
         }
+        type {
+          name
+          kind
+          ofType {
+            name
+            kind
+          }
+        }
+      }
     }
+  }
 }
 """
 
@@ -67,17 +66,31 @@ headers = {
 }
 
 # Make the request
-response = requests.post(url, json={'query': query, 'variables': variables}, headers=headers)
+response = requests.post(url, json={'query': query}, headers=headers)
 
-
-
-
-# Parse the response
+# Check the response
 if response.status_code == 200:
     data = response.json()
+    print(data)  # For debugging purposes, print the entire response
+
+    # Safely navigate the JSON response to find the 'getTests' field details
+    schema_types = data.get('data', {}).get('__schema', {}).get('types', [])
+    get_tests_details = None
     
+    for schema_type in schema_types:
+        if schema_type.get('name') == 'Query':
+            get_tests_details = next((field for field in schema_type.get('fields', []) if field['name'] == 'getTests'), None)
+            if get_tests_details:
+                break
+    
+    if get_tests_details:
+        print(get_tests_details)
+    else:
+        print("getTests query not found in the schema")
 else:
     print(f"Query failed to run by returning code of {response.status_code}. {response.text}")
+
+""""
 
 TestCaseData = []
 
@@ -151,4 +164,4 @@ for item in XRAYtransformed_data:
         "precondition": precondition_text
     }
 
-    
+    """
