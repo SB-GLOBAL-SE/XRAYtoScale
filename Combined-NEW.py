@@ -11,19 +11,19 @@ import sys
 
 ################
 ###########Arguments 
-if len(sys.argv) != 9:
-    print("Usage: python3 combined.py <Jira_api_token> <XRAY_Bearer_Token> <Scale_Bearer_Token> <project> <project_key> <projectID> <jira_base_url> <email>")
+if len(sys.argv) != 6:
+    print("Usage: python3 combined.py <project> <project_key> <projectID> <jira_base_url> <email>")
     sys.exit(1)
 
 
-Jira_api_token = sys.argv[1]
-XRAY_Bearer_Token = sys.argv[2]
-Scale_Bearer_Token = sys.argv[3]
-project = sys.argv[4]
-projectKey = sys.argv[5]
-projectID = sys.argv[6]
-Jira_base_url = sys.argv[7]
-email = sys.argv[8]
+Jira_api_token = "ATATT3xFfGF0b5Z_iL5Z8UVH1py0m-CIt6yZan1A5G2REp5Rxj4_c0G0OphRDfxhWHGxssiVv6dRYRdG6MsIMvjaY0zRcXWXLmmzs6ygAaNuqxjfRW2sio460zbybKewaeZBBr_S3fO_hrTzCYf_NVa7dULxEBVNF5ZUh2cpI6biZCMgTPgOg78=5C4D1333"
+XRAY_Bearer_Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5hbnQiOiIwZWM0MjhhMS0yNDcxLTNlZWMtODhjOS1mNDMwMDQyODg4MjgiLCJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUiLCJpc1hlYSI6ZmFsc2UsImlhdCI6MTcxNjQ4NjY5MSwiZXhwIjoxNzE2NTczMDkxLCJhdWQiOiIwODA1QUNBQzJDNzg0NTYxQjg5RTFDQzFCN0Y3NUUwNSIsImlzcyI6ImNvbS54cGFuZGl0LnBsdWdpbnMueHJheSIsInN1YiI6IjA4MDVBQ0FDMkM3ODQ1NjFCODlFMUNDMUI3Rjc1RTA1In0.jnliepxnHAZiowUsL9HZwWc8kbQcGHfnGmm-mpW8iLA"
+Scale_Bearer_Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb250ZXh0Ijp7ImJhc2VVcmwiOiJodHRwczovL21hdHRiNDcwMC5hdGxhc3NpYW4ubmV0IiwidXNlciI6eyJhY2NvdW50SWQiOiI2M2Y1MTc4NmZiM2FjNDAwM2ZhMmNhYTUifX0sImlzcyI6ImNvbS5rYW5vYWgudGVzdC1tYW5hZ2VyIiwic3ViIjoiMGVjNDI4YTEtMjQ3MS0zZWVjLTg4YzktZjQzMDA0Mjg4ODI4IiwiZXhwIjoxNzQ4MDIyMzQ2LCJpYXQiOjE3MTY0ODYzNDZ9.o_2-Q-1y_iVHmTBe61Uc8o125Z9XkAJ_pyBzXhVVu3U"
+project = sys.argv[1]
+projectKey = sys.argv[2]
+projectID = sys.argv[3]
+Jira_base_url = sys.argv[4]
+email = sys.argv[5]
 
 
 
@@ -49,6 +49,9 @@ total = response.get('total')
 start = total
 #####################################
 
+#
+# Split iterations if start is
+#
 
 
 # Define the GraphQL endpoint

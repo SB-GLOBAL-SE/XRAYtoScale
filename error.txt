@@ -1,0 +1,8 @@
+Test Case Key:XRRR-T38
+ if Test Case Key does NOT exists, the Test Case was not published.
+
+Test Cycle Key:XRRR-R36
+ if Test Cycle Key exists, the executions were NOT published for the associated Test Case and Cycle.
+
+Response Content:
+{"errorCode":400,"message":"Status 'TO DO' not found","status":"Bad Request"}
