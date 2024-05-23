@@ -1,4 +1,5 @@
 import requests
+from requests.auth import HTTPBasicAuth
 import sys
 
 ####################################
@@ -6,15 +7,48 @@ import sys
 # curl -H "Content-Type: application/json" -X POST --data '{
 #"client_id": "0805ACAC2C784561B89E1CC1B7F75E05","client_secret": "9565261606185b66b6e2bb76be6698101d1c9bff041c9bba7bf92a7b7a37328f" }'
 # https://xray.cloud.getxray.app/api/v1/authenticate
-if len(sys.argv) != 6:
-    print("Usage: python3 combined.py <XRAY_Bearer_Token> <Scale_Bearer_Token> <project> <project_key> <projectID>")
+
+
+################
+###########Arguments 
+if len(sys.argv) != 9:
+    print("Usage: python3 combined.py <Jira_api_token> <XRAY_Bearer_Token> <Scale_Bearer_Token> <project> <project_key> <projectID> <jira_base_url> <email>")
     sys.exit(1)
 
-XRAY_Bearer_Token = sys.argv[1]
-Scale_Bearer_Token = sys.argv[2]
-project = sys.argv[3]
-projectKey = sys.argv[4]
-projectID = sys.argv[5]
+
+Jira_api_token = sys.argv[1]
+XRAY_Bearer_Token = sys.argv[2]
+Scale_Bearer_Token = sys.argv[3]
+project = sys.argv[4]
+projectKey = sys.argv[5]
+projectID = sys.argv[6]
+Jira_base_url = sys.argv[7]
+email = sys.argv[8]
+
+
+
+#####################################
+########### Get total Test case count to determine iteration. 
+
+
+jql = f'project={project} and issuetype=Test'
+totalUrl = f'{Jira_base_url}/rest/api/3/search'
+headers = {
+    'Content-Type': 'application/json',
+}
+auth = HTTPBasicAuth(email, Jira_api_token)
+
+# Parameters
+params = {
+    'jql': jql,
+}
+# Make the request
+response = requests.get(totalUrl, headers=headers, auth=auth, params=params)
+response=response.json()
+total = response.get('total')
+start = total
+#####################################
+
 
 
 # Define the GraphQL endpoint
@@ -25,7 +59,7 @@ variables = {
     "jql": f"project = {project}",  # Replace with your JQL
     "projectId": f"{projectID}",  # Replace with your project ID
     "testType": None,  # Replace with test type if needed
-    "limit": 10,  # Replace with desired limit (max 100)
+    "limit": 100,  # Replace with desired limit (max 100)
     "start": 0,  # Replace with desired start index
     "folder": None  # Replace with folder information if needed
 }
