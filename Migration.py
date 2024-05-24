@@ -13,10 +13,7 @@ import sys
 
 
 ################
-###########Arguments 
-if len(sys.argv) != 6:
-    print("Usage: python3 combined.py <project> <project_key> <projectID> <jira_base_url> <email>")
-    sys.exit(1)
+##Arguments from app.prop file
 
 #########
 ##Read tokens from app.prop file.
@@ -25,11 +22,11 @@ config.read('app.prop')
 jira_api_token = config.get('DEFAULT', 'Jira_api_token', fallback=None)
 xray_bearer_token = config.get('DEFAULT', 'XRAY_Bearer_Token', fallback=None)
 scale_bearer_token = config.get('DEFAULT', 'Scale_Bearer_Token', fallback=None)
-project = sys.argv[1]
-projectKey = sys.argv[2]
-projectID = sys.argv[3]
-Jira_base_url = sys.argv[4]
-email = sys.argv[5]
+project = config.get('DEFAULT', 'project', fallback=None)
+projectKey = config.get('DEFAULT', 'projectKey', fallback=None)
+projectID = config.get('DEFAULT', 'projectID', fallback=None)
+Jira_base_url = config.get('DEFAULT', 'Jira_base_url', fallback=None)
+email = config.get('DEFAULT', 'email', fallback=None)
 
 
 
