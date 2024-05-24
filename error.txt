@@ -1,7 +1,7 @@
-Test Case Key:XRRR-T46
+Test Case Key:XRRR-T52
  if Test Case Key does NOT exists, the Test Case was not published.
 
-Test Cycle Key:XRRR-R44
+Test Cycle Key:XRRR-R50
  if Test Cycle Key exists, the executions were NOT published for the associated Test Case and Cycle.
 
 Response Content:

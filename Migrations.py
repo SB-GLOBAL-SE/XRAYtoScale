@@ -6,11 +6,9 @@ import sys
 ####################################
 #Must Authenticate first with XRAY clientID and clientSecret to get Bearer Token
 
-#######
-# curl -H "Content-Type: application/json" -X POST --data '{
-#"client_id": "0805ACAC2C784561B89E1CC1B7F75E05","client_secret": "9565261606185b66b6e2bb76be6698101d1c9bff041c9bba7bf92a7b7a37328f" }'
-# https://xray.cloud.getxray.app/api/v1/authenticate
-
+"""
+curl -H "Content-Type: application/json" -X POST --data '{"client_id": "0805ACAC2C784561B89E1CC1B7F75E05","client_secret": "9565261606185b66b6e2bb76be6698101d1c9bff041c9bba7bf92a7b7a37328f"}' https://xray.cloud.getxray.app/api/v1/authenticate
+"""
 
 ################
 ##Arguments from app.prop file
@@ -29,8 +27,6 @@ Jira_base_url = config.get('DEFAULT', 'Jira_base_url', fallback=None)
 email = config.get('DEFAULT', 'email', fallback=None)
 
 
-
-
 #####################################
 ########### Get total Test case count to determine iteration. 
 
@@ -46,17 +42,21 @@ auth = HTTPBasicAuth(email, jira_api_token)
 params = {
     'jql': jql,
 }
-# Make the request
+
 response = requests.get(totalUrl, headers=headers, auth=auth, params=params)
-response=response.json()
-total = response.get('total')
-start = total
+
+if response.status_code == 200:
+    data = response.json()  # Convert the response to a dictionary
+    total = data.get('total')
+    start = total
+else:
+    print("Error setting setting iteration. If nonetype error, there are no tests in the query or project")
+    print(f"Error: {response.status_code} - {response.text}")
+
 #####################################
 
-
-
 # Default GraphQL XRAY endpoint
-url = "https://xray.cloud.getxray.app/api/v2/graphql"  \
+url = "https://xray.cloud.getxray.app/api/v2/graphql"  
 
 # Define the variables for the querys
 variables = {
