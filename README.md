@@ -11,6 +11,8 @@ The POC script is designed to highlight possibilities, it is not a production-re
         * [Test Case Data](#test-case-data)
         * [Test Cycle Data](#test-cycle-data)
         * [Test Execution Data](#test-execution-data)
+    * [Steps to Run the Script](#steps-to-run-the-script)
+      
       
 <!-- TOC -->
 
@@ -48,3 +50,20 @@ There are three core test entities: **Test Case**, **Test Cycle**, and **Test Ex
 - **Schema Endpoints**:
   - `getTestExecutions`
   - `getTestRuns`
+
+ 
+ ## Steps to Run the Script
+ - **Replace information in app.prop file**
+    - `Jira_api_token = <Jira_API_Token>`
+    - `XRAY_Bearer_Token = <XRay_API_Token>`
+    - `Scale_Bearer_Token = <Zephyr_Scale_API_Token>`
+    - `project = <Jira_project>`
+    - `projectKey = <Jira_project_Key>`
+    - `projectID = <Jira_project_ID>`
+    - `Jira_base_url = <host>/`
+    - `email = <jira-User_email>` `
+  
+    - To get XRay Bearer Token, you must send a cURL based on XRay clientSecret and clientID
+    - `curl -H "Content-Type: application/json" -X POST --data '{"client_id": "clientID from XRay","client_secret": "client Secret from XRay"}' https://xray.cloud.getxray.app/api/v1/authenticate`
+  
+    - After you have replaced all values in the app.properties file, run with the local python interpreter. IE python3 migrations.py
