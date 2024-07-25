@@ -4,10 +4,10 @@ import configparser
 import sys
 
 ####################################
-#Must Authenticate first with XRAY clientID and clientSecret to get Bearer Token
+#Must Authenticate first with XRAY clientID and clientSecret to get Bearer Token for app.prop
 
 """
-curl -H "Content-Type: application/json" -X POST --data '{"client_id": "0805ACAC2C784561B89E1CC1B7F75E05","client_secret": "9565261606185b66b6e2bb76be6698101d1c9bff041c9bba7bf92a7b7a37328f"}' https://xray.cloud.getxray.app/api/v1/authenticate
+curl -H "Content-Type: application/json" -X POST --data '{"client_id": "clientID from XRay","client_secret": "client Secret from XRay"}' https://xray.cloud.getxray.app/api/v1/authenticate
 """
 
 ################
