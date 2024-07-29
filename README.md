@@ -1,6 +1,6 @@
 # POC Script for XRay to Zephyr Scale Cloud-to-Cloud Migrations
 
-The POC script is designed to highlight possibilities, it is not a production-ready script. The POC script is designed specifically for Cloud-to-Cloud migrations. However, it can also be adapted to support migrations from XRay to Zephyr Scale in Data Center-to-Data Center or Data Center-to-Cloud environments.
+The POC script is designed to highlight possibilities, it is not a production-ready script. The POC script is designed specifically for Cloud-to-Cloud migrations, on the same instance. However, it can also be adapted to support migrations from XRay to Zephyr Scale in Data Center-to-Data Center or Data Center-to-Cloud environments.
 
 <!-- TOC -->
 
